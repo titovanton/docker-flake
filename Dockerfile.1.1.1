@@ -1,0 +1,23 @@
+# Flake8 runner via Gulp(Node.js)
+
+FROM nikolaik/python-nodejs:latest
+
+# for mounting volumes
+RUN mkdir /app
+
+# make docker user
+RUN useradd -m docker && echo "docker:docker" | chpasswd && adduser docker sudo
+
+RUN pip install --no-cache-dir flake8
+
+RUN npm i gulp -g
+
+WORKDIR /home/docker
+ADD ./package.json ./package.json
+ADD ./gulpfile.js ./gulpfile.js
+RUN npm i
+RUN chown docker:docker package.json
+RUN chown -R docker:docker node_modules
+RUN chown docker:docker gulpfile.js
+
+CMD ["npm", "run", "gulp"]

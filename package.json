@@ -1,0 +1,20 @@
+{
+  "name": "flake_runner",
+  "version": "1.1.0",
+  "description": "Flake runner",
+  "main": "gulpfile.js",
+  "scripts": {
+    "gulp": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "No repo specified"
+  },
+  "author": "Titov Anton, webdev@titovanton.com",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "shelljs": "^0.8.4"
+  }
+}

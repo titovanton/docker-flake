@@ -1,0 +1,35 @@
+# Flake8 runner via Gulp(Node.js)
+
+FROM python:3.7
+
+# for mounting volumes
+RUN mkdir /app
+
+# make docker user
+RUN useradd -m docker && echo "docker:docker" | chpasswd && adduser docker sudo
+
+# turn off bell
+RUN echo 'set bell-style none' >> ~/.inputrc
+
+RUN apt-get update
+RUN apt-get install -y build-essential python3-dev \
+    python3-setuptools python3-wheel python3-cffi libcairo2 libpango-1.0-0 \
+    libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info
+
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir flake8
+
+RUN apt-get autoremove -y node;\
+    curl -sL https://deb.nodesource.com/setup_8.x | bash -;\
+    apt-get install -y nodejs;\
+    npm i npm@latest -g
+
+RUN npm i gulp -g
+
+WORKDIR /home/docker
+ADD ./package.json ./package.json
+ADD ./gulpfile.js ./gulpfile.js
+RUN npm i
+RUN chown docker:docker package.json
+RUN chown -R docker:docker node_modules
+RUN chown docker:docker gulpfile.js
