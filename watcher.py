@@ -5,7 +5,7 @@ from watchdog.observers import Observer
 
 
 def run_flake(event):
-    cmd = ['flake8', event.src_path]
+    cmd = ['flake8',  '--config', '/watch_dir/setup.cfg', event.src_path]
     result = subprocess.run(cmd, stdout=subprocess.PIPE)
     print(result.stdout.decode())
     print("-----")
