@@ -1,0 +1,38 @@
+# Fully python3.11, with watchdog as changes observer
+
+# BUILD IMAGE
+FROM python:3.11 as build-python
+MAINTAINER Titov Anton <webdev@titovanton.com>
+
+RUN apt-get update
+RUN apt-get install -y build-essential
+RUN apt-get install -y python-dev
+RUN apt-get install -y python-setuptools
+
+RUN pip install --upgrade pip
+
+# For better Docker caching purpose
+RUN pip install flake8==6.0.0
+RUN pip install watchdog==3.0.0
+
+# -----------------------------------------------------
+# RUN IMAGE
+FROM python:3.11-slim
+MAINTAINER Titov Anton <webdev@titovanton.com>
+
+RUN groupadd -r docker -g 1000 && \
+   useradd -m -r -g docker -u 1000 docker && \
+   echo "docker:docker" | chpasswd && adduser docker sudo
+
+COPY --from=build-python \
+   /usr/local/lib/python3.11/site-packages/ \
+   /usr/local/lib/python3.11/site-packages/
+COPY --from=build-python \
+   /usr/local/bin/ \
+   /usr/local/bin/
+
+WORKDIR /app
+COPY watcher.py watcher.py
+RUN mkdir /watch_dir
+
+CMD ["python", "/app/watcher.py"]
